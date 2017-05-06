@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,body{
+      margin: 0;
+      padding: 0;
+      font-size: 10px;
+      overflow: hidden;
+    }
+    #box{
+      width: 100%;
+      height: 100%;
+    }
+    #dm{
+      width: 100%;
+      height: 90vh;
+      background: #E8F1F5;
+    }
+    #dm span{
+      width: auto;
+      height: 3rem;
+      font-size: 2rem;
+      line-height: 2rem;
+      position: absolute;
+      white-space: nowrap;
+    }
+    #idDom{
+      width: 100%;
+      height: 10vh;
+      background: #666;
+      position: absolute;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #content{
+      width: 50rem;
+      height: 10vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .title{
+      font-size: 2.2rem;
+      color: #fff;
+    }
+    .text{
+      width: 30rem;
+      height: 2.5rem;
+      border: none;
+      border-radius: .5rem;
+      font-size: 1.4rem;
+      padding: 0 1rem;
+      margin: 0 .5rem;
+    }
+    .btn{
+      width: 6rem;
+      height: 2.6rem;
+      border: none;
+      background: #f00;
+      color: #fff;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="box" id="box">
+    <div id="dm"></div>
+
+    <div class="idDom" id="idDom">
+      <div id="content">
+        <p class="title">弹幕:</p>
+        <input type="text" class="text" id="text" placeholder="请输入..."/>
+        <button type="button" class="btn" id="btn">发送</button>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  var timer = null;
+  var btn = document.getElementById('btn');
+  //触发发射按钮
+  btn.onclick = function(){
+    addBarrage();
+  };
+  //键盘监听事件
+  document.onkeydown = function(evt){
+    var event = evt || window.event;//兼容IE
+    if(event.keyCode == 13){
+      //监听回车事件
+      addBarrage();
+    }
+  };
+  var colors = ['#2C3E50','#FF0000','#1E87F0','#7AC84B','#FF7F00','#9B39F4','#FF69B4'];
+  function addBarrage(){
+    clearInterval(timer);
+    var text = document.getElementById('text').value;  //获取用户输入的值
+    document.getElementById('text').value = '';//输入框清空
+    // 生成一个从 m ~ n 之间的随机整数的公式
+    //parseInt(Math.random()*(n-m+1)+m);
+    var index = parseInt(Math.random() * 7);  //生成一个0~6的随机数,便于获取7种随机颜色
+    var screenW = window.innerWidth;
+    var screenH = dm.offsetHeight;   //获取当前屏幕高度
+    var max = Math.floor(screenH / 40);//每条吐槽的宽度设置40px
+    var height = 10 + 40 * (parseInt(Math.random() * (max + 1)) - 1);
+    //在 box 中插入弹幕
+    var span = document.createElement('span');
+    span.style.left = screenW +'px';
+    span.style.top = height +'px';
+    span.style.color = colors[index];
+    span.innerHTML = text;
+    var dmDom = document.getElementById('dm');
+    dmDom.appendChild(span);
+    timer = setInterval(move,10);//10毫秒移动速度
+  }
+  function move(){
+    var arr= [];
+    var oSpan = document.getElementsByTagName('span');//获取现有的吐槽数目
+    for(var i = 0;i < oSpan.length;i++){
+      arr.push(oSpan[i].offsetLeft);//逐条更改left值
+      arr[i] -= 2;//更改offsetLeft使其呈现向左移动的效果
+      oSpan[i].style.left = arr[i]+'px';
+      //弹幕已经移出了页面的左边，弹幕删除
+      if (arr[i] < -oSpan[i].offsetWidth) {
+        var dmDom = document.getElementById('dm');
+        dmDom.removeChild(dmDom.childNodes[0]);
+      }
+    }
+  }
+</script>
+</html>
